@@ -67,4 +67,4 @@ Small epsilon was introduced to avoid the division by zero error.
 <img src="https://latex.codecogs.com/svg.image?\mu_j%20=%20\frac{\sum_{i=1}^N%20w_i%20x_i}{\sum_{i=1}^N%20w_i}" title="\mu_j = \frac{\sum_{i=1}^N w_i x_i}{\sum_{i=1}^N w_i}" />
 </div>
 
-The relative weights count for the clustering. 
+Only relative weights matter for the weighting process, and only positive values are meaningful. Therefore, Min-Max scaling is a suitable transformation, as it scales the weights between 0 and 1 — with 1 representing the highest weight (i.e., the lowest coefficient of variation, CV) and 0 representing the lowest weight (i.e., the highest CV).
