@@ -8,7 +8,7 @@ from matplotlib.lines import Line2D
 import contextily as ctx
 import matplotlib.pyplot as plt
 import pandas as pd
-plt.rcParams['figure.figsize'] = [15, 15]
+# plt.rcParams['figure.figsize'] = [15, 15]
 
 
 class EnhancedKMeans:
