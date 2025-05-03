@@ -1,5 +1,24 @@
 # Weighted-Clustering with Data Quality Integration
-This project implements a reliability-weighted K-means clustering algorithm that incorporates data quality metrics through Coefficient of Variation (CV) values. Designed for use with American Community Survey (ACS-5) data, this approach gives higher weight to observations with lower measurement error. 
+This project implements a reliability-weighted K-means clustering algorithm that incorporates data quality metrics through Coefficient of Variation (CV) values. Designed for use with American Community Survey (ACS-5) data, this approach gives higher weight to observations with lower measurement error. It's supposed to be used with GeoDataFrames. The following features are included: 
+
+## Features
+
+- **Reliability-Weighted Clustering**  
+  This algorithm allows you to incorporate data quality directly into the clustering process. Observations with lower Coefficient of Variation (CV) values — indicating more reliable measurements — receive higher weights. This ensures that clusters are driven more by high-quality data rather than noisy inputs.
+
+- **Customizable Feature Scaling**  
+  Choose from `standard` (z-score), `minmax`, or no scaling to preprocess your data before clustering. Feature scaling is critical when variables are on different scales, and this option provides flexibility depending on your dataset's characteristics.
+
+- **Silhouette Analysis for Optimal Cluster Selection**  
+  The silhouette analysis method is integrated to help you identify the most appropriate number of clusters. This feature generates silhouette scores for a user-defined range of cluster counts and visualizes them, aiding in model selection.
+
+- **Map-Based Cluster Visualization**  
+  Designed for use with spatial data, the class can generate map plots using `GeoDataFrames`. It overlays clusters on a basemap (via `contextily`), making it easier to interpret spatial patterns in the results.
+
+- **Descriptive Cluster Statistics**  
+  After fitting the model, you can retrieve a summary table with cluster-wise statistics. This includes the mean value of each feature (in original scale), the number of observations per cluster, and their percentage share — useful for interpreting and comparing clusters.
+
+
 
 # Key Concepts
 
