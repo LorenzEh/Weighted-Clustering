@@ -1,3 +1,15 @@
+# libraries
+from sklearn.cluster import KMeans
+from sklearn.metrics import silhouette_score
+import numpy as np
+import matplotlib.pyplot as plt
+import geopandas as gpd
+from matplotlib.lines import Line2D
+import contextily as ctx
+import matplotlib.pyplot as plt
+import pandas as pd
+plt.rcParams['figure.figsize'] = [15, 15]
+
 
 class EnhancedKMeans:
     """
