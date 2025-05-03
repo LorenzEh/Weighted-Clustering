@@ -49,7 +49,6 @@ Small epsilon was introduced to avoid the division by zero error.
 
 ## 2. Feature Preprocessing
 
-**Options:**
 
 ### 2.1 Z-score Normalization
 <div align="center">
