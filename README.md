@@ -10,8 +10,8 @@ This project implements a reliability-weighted K-means clustering algorithm that
 - **Customizable Feature Scaling**  
   Choose from `standard` (z-score), `minmax`, or no scaling to preprocess your data before clustering. Feature scaling is critical when variables are on different scales, and this option provides flexibility depending on your dataset's characteristics.
 
-- **Silhouette Analysis for Optimal Cluster Selection**  
-  The silhouette analysis method is integrated to help you identify the most appropriate number of clusters. This feature generates silhouette scores for a user-defined range of cluster counts and visualizes them, aiding in model selection.
+- **Silhouette Analysis & WCSS for Optimal Cluster Selection**  
+  The silhouette analysis method is integrated to help you identify the most appropriate number of clusters. This feature generates silhouette scores and WCSS for a user-defined range of cluster counts and visualizes them, aiding in model selection.
 
 - **Map-Based Cluster Visualization**  
   Designed for use with spatial data, the class can generate map plots using `GeoDataFrames`. It overlays clusters on a basemap (via `contextily`), making it easier to interpret spatial patterns in the results.
