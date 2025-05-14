@@ -21,6 +21,11 @@ class EnhancedKMeans:
     - scaler_type: None, 'standard' (z-score), or 'minmax' (default='standard')
     - random_state: Random seed (default=None)
     - max_iter: Maximum iterations (default=300)
+
+    Additional features: 
+    - WCSS tracking for elbow method and cluster statistics
+    - Combined evaluation plots (Silhouette and WCSS)
+    - Automatic scaling inversion for cluster statistics
     """
     
     def __init__(self, n_clusters=8, weighted=True, scaler_type='standard', 
@@ -38,6 +43,7 @@ class EnhancedKMeans:
         self.cluster_centers_ = None
         self.scaler = None
         self.X_scaled_ = None
+        self.wcss_ = None
 
     def calculate_weights(self, data, variables):
         """Calculate reliability weights using CV columns"""
@@ -74,6 +80,7 @@ class EnhancedKMeans:
         self.kmeans.fit(self.X_scaled_, sample_weight=self.weights_)
         self.labels_ = self.kmeans.labels_
         self.cluster_centers_ = self.kmeans.cluster_centers_
+        self.wcss_ = self.kmeans.inertia_  
         return self
 
     def fit_predict(self, data, variables, add_to_data=False):
@@ -84,9 +91,9 @@ class EnhancedKMeans:
             data[col_name] = self.labels_
         return self.labels_
 
-    def silhouette_analysis(self, data, variables, cluster_range=range(2, 15)):
-        """Perform silhouette analysis with proper scaling"""
-        scores = []
+    def elbow_analysis(self, data, variables, cluster_range=range(2, 11)):
+        """Perform elbow method analysis using WCSS"""
+        wcss_values = []
         
         for k in cluster_range:
             temp_model = EnhancedKMeans(
@@ -96,19 +103,64 @@ class EnhancedKMeans:
                 random_state=self.random_state
             )
             temp_model.fit(data, variables)
-            scores.append(silhouette_score(temp_model.X_scaled_, temp_model.labels_))
+            wcss_values.append(temp_model.wcss_)
             
         plt.figure(figsize=(10, 6))
-        plt.plot(cluster_range, scores, marker='o', linestyle='--', color='r')
-        plt.xlabel('Number of Clusters')
-        plt.ylabel('Silhouette Score')
-        title_type = ['Unscaled', 'Z-score Scaled', 'MinMax Scaled'][
-            ['none', 'standard', 'minmax'].index(self.scaler_type or 'none')]
-        plt.title(f'Silhouette Analysis ({title_type} Features)')
-        plt.grid(True)
+        plt.plot(cluster_range, wcss_values, 'bo-', 
+                markersize=8, linewidth=2, color='darkblue')
+        plt.xlabel('Number of Clusters', fontsize=12)
+        plt.ylabel('Within-Cluster Sum of Squares (WCSS)', fontsize=12)
+        plt.title('Elbow Method for Optimal Cluster Number', fontsize=14)
+        plt.grid(True, linestyle='--', alpha=0.7)
+        plt.xticks(cluster_range)
         plt.show()
         
-        return scores
+        return wcss_values
+
+    def cluster_evaluation(self, data, variables, cluster_range=range(2, 11)):
+        """Combined evaluation with WCSS and Silhouette Score"""
+        wcss_values = []
+        silhouette_scores = []
+        
+        for k in cluster_range:
+            temp_model = EnhancedKMeans(
+                n_clusters=k,
+                weighted=self.weighted,
+                scaler_type=self.scaler_type,
+                random_state=self.random_state
+            )
+            temp_model.fit(data, variables)
+            
+            wcss_values.append(temp_model.wcss_)
+            silhouette_scores.append(
+                silhouette_score(temp_model.X_scaled_, temp_model.labels_)
+            )
+        
+        # Create subplots
+        fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(18, 6))
+        
+        # Elbow plot
+        ax1.plot(cluster_range, wcss_values, 'bo-', 
+                markersize=8, linewidth=2, color='darkblue')
+        ax1.set_title('Elbow Method (WCSS)', fontsize=14)
+        ax1.set_xlabel('Number of Clusters')
+        ax1.set_ylabel('Within-Cluster Sum of Squares')
+        ax1.grid(True, linestyle='--', alpha=0.7)
+        ax1.set_xticks(cluster_range)
+        
+        # Silhouette plot
+        ax2.plot(cluster_range, silhouette_scores, 'bo-', 
+                markersize=8, linewidth=2, color='darkred')
+        ax2.set_title('Silhouette Analysis', fontsize=14)
+        ax2.set_xlabel('Number of Clusters')
+        ax2.set_ylabel('Silhouette Score')
+        ax2.grid(True, linestyle='--', alpha=0.7)
+        ax2.set_xticks(cluster_range)
+        
+        plt.tight_layout()
+        plt.show()
+        
+        return {'wcss': wcss_values, 'silhouette': silhouette_scores}
 
     def plot_clusters(self, data, cluster_column='Cluster', figsize=(60, 30), zoom=5, 
                     basemap_source=ctx.providers.OpenStreetMap.Mapnik):
@@ -160,13 +212,15 @@ class EnhancedKMeans:
         plt.tight_layout()
         plt.show()
         
-
+    
     def get_cluster_stats(self, variables):
         """
         Returns DataFrame with cluster statistics:
         - Mean feature values (in original scale if scaled)
         - Number of observations
         - Observation percentage
+        - WCSS (Within-Cluster Sum of Squares)
+        - WCSS % (Contribution to total WCSS)
         
         Args:
             variables: List of variable names used in clustering
@@ -192,6 +246,29 @@ class EnhancedKMeans:
         stats_df['Observations'] = stats_df.index.map(lambda x: counts[x])
         stats_df['Observation %'] = (stats_df['Observations'] / stats_df['Observations'].sum()) * 100
         
+        # Calculate WCSS per cluster with weights
+        cluster_wcss = []
+        for i in range(self.n_clusters):
+            cluster_mask = (self.labels_ == i)
+            cluster_points = self.X_scaled_[cluster_mask]
+            cluster_weights = self.weights_[cluster_mask] if self.weights_ is not None else None
+            
+            # Weighted squared distances
+            squared_dist = np.sum((cluster_points - self.cluster_centers_[i])**2, axis=1)
+            if cluster_weights is not None:
+                squared_dist *= cluster_weights  # Apply weights
+            
+            cluster_wcss.append(np.sum(squared_dist))
+        
+        # Verify total WCSS matches self.wcss_
+        total_calculated_wcss = np.sum(cluster_wcss)
+        if not np.isclose(total_calculated_wcss, self.wcss_, rtol=1e-3):
+            raise ValueError(f"WCSS mismatch: {total_calculated_wcss} vs {self.wcss_}")
+        
+        stats_df['WCSS'] = cluster_wcss
+        stats_df['WCSS %'] = (stats_df['WCSS'] / self.wcss_) * 100  # Now correct
+        
         # Reorder columns and sort
-        stats_df = stats_df[['Cluster', 'Observations', 'Observation %'] + variables]
+        stats_df = stats_df[['Cluster', 'Observations', 'Observation %', 'WCSS', 'WCSS %'] + variables]
         return stats_df.sort_values('Cluster').reset_index(drop=True)
+        
