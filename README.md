@@ -42,7 +42,7 @@ Standardized measure of estimate reliability:
 <img src="https://latex.codecogs.com/svg.image?w_i%20%5Cpropto%20%5Cfrac%7B1%7D%7BCV_i%7D" title="w_i \propto \frac{1}{CV_i}" />
 </div>
 
-Lower CV → Higher weight → Greater cluster influence
+Weight scales with the inverse of the CV: Lower CV → Higher weight → Greater cluster influence
 
 # Methodology
 
