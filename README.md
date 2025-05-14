@@ -17,7 +17,7 @@ This project implements a reliability-weighted K-means clustering algorithm that
   Designed for use with spatial data, the class can generate map plots using `GeoDataFrames`. It overlays clusters on a basemap (via `contextily`), making it easier to interpret spatial patterns in the results.
 
 - **Descriptive Cluster Statistics**  
-  After fitting the model, you can retrieve a summary table with cluster-wise statistics. This includes the mean value of each feature (in original scale), the number of observations per cluster, and their percentage share — useful for interpreting and comparing clusters.
+  After fitting the model, you can retrieve a summary table with cluster-wise statistics. This includes the mean value of each feature (in original scale), the WCSS per Cluster (percentage of total and absolute value), the number of observations per cluster, and their percentage share — useful for interpreting and comparing clusters.
 
 
 
