@@ -1,6 +1,6 @@
 # Weighted-Clustering with Data Quality Integration ![Python](https://img.shields.io/badge/Python-3.8-blue.svg)
 
-This project implements a reliability-weighted K-means clustering algorithm that incorporates data quality metrics through Coefficient of Variation (CV) values. Designed for use with American Community Survey (ACS-5) data, this approach gives higher weight to observations with lower measurement error. It's supposed to be used with GeoDataFrames. The following features are included: 
+This project was inspired by my Masters Thesis. It implements a reliability-weighted K-means clustering algorithm that incorporates data quality metrics through Coefficient of Variation (CV) values. Designed for use with American Community Survey (ACS-5) data, this approach gives higher weight to observations with lower measurement error. It's supposed to be used with GeoDataFrames and can be used in combination with my [ACS-5](https://github.com/LorenzEh/ACS-5) project, by setting `include_cv_columns=True`. This will automatically calcuate the CV for each observation, which can than be used in the weighting process. The following features are included: 
 
 ## Features
 
