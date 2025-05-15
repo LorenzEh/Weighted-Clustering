@@ -55,7 +55,7 @@ Where:
 <img src="https://latex.codecogs.com/svg.image?\text{MeanCV}_i%20=%20\frac{1}{m}%20\sum_{j=1}^{m}%20\text{CV}_{ij}" title="\text{MeanCV}_i = \frac{1}{m} \sum_{j=1}^{m} \text{CV}_{ij}" />
 </div>
 
-- `ε`: Small constant to avoid division by zero
+- `ε`: Small constant to avoid division by zero 
 
 ### Min-Max Normalization
 
