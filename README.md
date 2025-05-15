@@ -37,7 +37,7 @@ A standardized measure of estimate reliability:
 
 ---
 
-## ⚖️ Reliability Weighting Principle
+## Reliability Weighting Principle
 
 ### Weight Calculation Pipeline
 
@@ -71,7 +71,7 @@ Normalize weights to [0, 1]:
 
 ---
 
-## 📊 Within-Cluster Sum of Squares (WCSS)
+## Within-Cluster Sum of Squares (WCSS)
 
 Measures how tightly grouped the points in a cluster are.
 
@@ -108,7 +108,7 @@ Where:
 
 ---
 
-## ⚙️ Feature Preprocessing
+## Feature Preprocessing
 
 ### Z-score Normalization
 
